@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="./src/style.css">
+</head>
+<body>
+  <canvas class="absolute top-0 left-0 w-full h-screen"></canvas>
+  
+  <!-- Computer OS Overlay -->
+  <div id="computer-os" class="computer-os" style="display: none;">
+    <!-- Desktop Background -->
+    <div class="desktop-background">
+      <!-- Desktop Icons -->
+      <div class="desktop-icons">
+        <div class="desktop-icon" data-folder="about">
+          <div class="icon-image">📁</div>
+          <div class="icon-label">About Me</div>
+        </div>
+        <div class="desktop-icon" data-folder="resume">
+          <div class="icon-image">📄</div>
+          <div class="icon-label">Resume</div>
+        </div>
+        <div class="desktop-icon" data-folder="projects">
+          <div class="icon-image">💼</div>
+          <div class="icon-label">Projects</div>
+        </div>
+        <div class="desktop-icon" data-folder="skills">
+          <div class="icon-image">⚡</div>
+          <div class="icon-label">Skills</div>
+        </div>
+        <div class="desktop-icon" data-folder="contact">
+          <div class="icon-image">📧</div>
+          <div class="icon-label">Contact</div>
+        </div>
+        <div class="desktop-icon" data-app="spotify">
+          <div class="icon-image spotify-icon">🎵</div>
+          <div class="icon-label">Spotify</div>
+        </div>
+      </div>
+      
+      <!-- Windows -->
+      <div id="window-container" class="window-container"></div>
+    </div>
+    
+    <!-- Taskbar -->
+    <div class="taskbar">
+      <div class="taskbar-start">
+        <button class="start-button" id="start-button">
+          <span class="start-icon">⊞</span>
+          <span>Start</span>
+        </button>
+      </div>
+      <div class="taskbar-center">
+        <div class="taskbar-apps" id="taskbar-apps"></div>
+      </div>
+      <div class="taskbar-end">
+        <div class="system-tray">
+          <div class="tray-icon">🔊</div>
+          <div class="tray-icon">🌐</div>
+          <div class="time" id="clock">12:00</div>
+        </div>
+        <button class="exit-button" onclick="returnToRoom()" title="Exit to Room">×</button>
+      </div>
+    </div>
+  </div>
+  
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
