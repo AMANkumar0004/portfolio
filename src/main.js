@@ -90,6 +90,9 @@ loader.load(
     roomModel.scale.multiplyScalar(scale);
     roomModel.position.sub(center.multiplyScalar(scale));
     roomModel.position.y = -1;
+    // Slightly rotate the room model to the right on Y axis
+    roomModel.rotation.y = -1; // ~-10 degrees in radians
+    
     
     scene.add(roomModel);
     
