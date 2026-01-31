@@ -7,6 +7,7 @@ import { gsap } from 'gsap';
 // Get the existing canvas from the DOM
 const canvas = document.querySelector('canvas');
 
+// Overlay instruction in the top-left corner with subtle parallax effect
 
 // Scene
 const scene = new THREE.Scene();
