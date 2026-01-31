@@ -54,9 +54,11 @@
     <!-- Taskbar -->
     <div class="taskbar">
       <div class="taskbar-start">
-        <button class="start-button" id="start-button">
-          <span class="start-icon">⊞</span>
-          <span>Start</span>
+        <button class="start-button flex items-center gap-2" id="start-button" style="display:flex;align-items:center;gap:8px;">
+          <span class="start-icon" style="display:flex;align-items:center;">
+            <img src="/windows.png" alt="" style="width:20px; height:20px; display:block; margin:0;"/>
+          </span>
+          <span style="display:flex;align-items:center;">Windows</span>
         </button>
       </div>
       <div class="taskbar-center">
@@ -68,7 +70,7 @@
           <div class="tray-icon">🌐</div>
           <div class="time" id="clock">12:00</div>
         </div>
-        <button class="exit-button" onclick="returnToRoom()" title="Exit to Room">×</button>
+        <button class="exit-button" onclick="returnToRoom()" title="Exit to Room" style="font-size: 14px;">Shutdown</button>
       </div>
     </div>
   </div>
