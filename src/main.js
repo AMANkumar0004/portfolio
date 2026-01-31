@@ -46,6 +46,7 @@ controls.maxDistance = 20;
 // State
 let roomModel = null;
 let computerMesh = null;
+let cameraMesh = null;
 let isZoomedIn = false;
 let raycaster = new THREE.Raycaster();
 let mouse = new THREE.Vector2();
@@ -91,7 +92,7 @@ loader.load(
     roomModel.position.sub(center.multiplyScalar(scale));
     roomModel.position.y = -1;
     // Slightly rotate the room model to the right on Y axis
-    roomModel.rotation.y = -1; // ~-10 degrees in radians
+   
     
     
     scene.add(roomModel);
@@ -160,6 +161,9 @@ loader.load(
     if (computerMesh) {
       computerMesh.userData.isComputer = true;
     }
+    
+    // Find and make camera model interactive
+    findAndSetupCameraModel();
   },
   (progress) => {
     console.log('Loading progress:', (progress.loaded / progress.total * 100) + '%');
@@ -184,11 +188,15 @@ function onMouseClick(event) {
     if (intersects.length > 0) {
       const clickedObject = intersects[0].object;
       
-      // Check if clicked object or its parent is the computer
+      // Check what was clicked
       let checkObject = clickedObject;
       while (checkObject) {
         if (checkObject.userData.isComputer || checkObject === computerMesh) {
           zoomToComputer(intersects[0].point);
+          return;
+        } else if (checkObject.userData.isCamera || checkObject === cameraMesh) {
+          // Open LinkedIn in a new tab when camera is clicked
+          window.open('https://www.linkedin.com/in/your-linkedin-username', '_blank');
           return;
         }
         checkObject = checkObject.parent;
@@ -1024,14 +1032,111 @@ if (document.readyState === 'loading') {
   }, 2000);
 })();
 
+// Add LinkedIn icon to the scene
+function addLinkedInIcon() {
+  // Create a plane for the LinkedIn logo
+  const loader = new THREE.TextureLoader();
+  loader.load(
+    'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg',
+    (texture) => {
+      const material = new THREE.MeshBasicMaterial({
+        map: texture,
+        transparent: true,
+        opacity: 0.9,
+        side: THREE.DoubleSide
+      });
+      
+      const geometry = new THREE.PlaneGeometry(0.5, 0.5);
+      linkedinMesh = new THREE.Mesh(geometry, material);
+      
+      // Position the LinkedIn icon (adjust these values based on your scene)
+      linkedinMesh.position.set(1.5, 1.5, -1);
+      linkedinMesh.rotation.y = Math.PI / 4; // Rotate to face the camera
+      
+      // Make it interactive
+      linkedinMesh.userData.isLinkedIn = true;
+      
+      // Add to scene
+      scene.add(linkedinMesh);
+      
+      // Add hover effect
+      linkedinMesh.onHover = () => {
+        document.body.style.cursor = 'pointer';
+      };
+      
+      linkedinMesh.onHoverOut = () => {
+        document.body.style.cursor = 'auto';
+      };
+      
+      // Add click event to open LinkedIn profile
+      linkedinMesh.userData.onClick = () => {
+        window.open('https://www.linkedin.com/in/your-profile-url/', '_blank');
+      };
+    },
+    undefined,
+    (error) => {
+      console.error('Error loading LinkedIn icon:', error);
+    }
+  );
+}
 
-
+// Find and setup camera model in the scene
+function findAndSetupCameraModel() {
+  // Look for camera model in the scene
+  roomModel.traverse((child) => {
+    if (child.isMesh) {
+      const name = child.name.toLowerCase();
+      const box = new THREE.Box3().setFromObject(child);
+      const center = box.getCenter(new THREE.Vector3());
+      
+      // Check if it's likely a camera model based on name or position
+      const isCamera = name.includes('camera') || 
+                      name.includes('photo') || 
+                      (center.y > 1.5 && center.y < 3.0 && 
+                      Math.abs(center.x) > 0.5 && 
+                      Math.abs(center.z) > 0.5);
+      
+      if (isCamera && !cameraMesh) {
+        cameraMesh = child;
+        cameraMesh.userData.isCamera = true;
+        console.log('Camera model found:', cameraMesh.name);
+        
+        // Add hover effect
+        cameraMesh.onHover = () => {
+          document.body.style.cursor = 'pointer';
+          // Optional: Add highlight effect
+          if (cameraMesh.material) {
+            cameraMesh.material.emissive = new THREE.Color(0x333333);
+          }
+        };
+        
+        cameraMesh.onHoverOut = () => {
+          document.body.style.cursor = 'auto';
+          // Remove highlight effect
+          if (cameraMesh.material) {
+            cameraMesh.material.emissive = new THREE.Color(0x000000);
+          }
+        };
+      }
+    }
+  });
+}
 
 // Animation loop
 function tick() {
-  if (!isZoomedIn) {
-    controls.update();
+  // Handle hover effect for camera model
+  if (cameraMesh && !isZoomedIn) {
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObject(cameraMesh, true);
+    
+    if (intersects.length > 0) {
+      if (cameraMesh.onHover) cameraMesh.onHover();
+    } else if (cameraMesh.onHoverOut) {
+      cameraMesh.onHoverOut();
+    }
   }
+  
+  controls.update();
   renderer.render(scene, camera);
   requestAnimationFrame(tick);
 }
