@@ -937,6 +937,93 @@ if (document.readyState === 'loading') {
   initDesktopInteractions();
 }
 
+// Parallax notification in top-left (auto-disappear after 2 seconds)
+(function createParallaxNotification() {
+  // Only show if we're on the portfolio/computer OS overlay, not in room
+  if (!document.getElementById('computer-os')) return;
+
+  // Create notification container
+  const notif = document.createElement('div');
+  notif.id = 'parallax-notification';
+  Object.assign(notif.style, {
+    position: "fixed",
+    top: "32px",
+    left: "32px",
+    zIndex: 2000,
+    pointerEvents: "auto"
+  });
+
+  // Create notification content
+  const notifContent = document.createElement('div');
+  notifContent.style.backdropFilter = 'blur(8px)';
+  notifContent.style.background = 'rgba(34, 34, 54, 0.88)';
+  notifContent.style.color = '#fff';
+  notifContent.style.fontWeight = '600';
+  notifContent.style.fontSize = '17px';
+  notifContent.style.borderRadius = '14px 14px 18px 4px';
+  notifContent.style.boxShadow = '0 4px 32px 0 rgba(22,34,64,0.23), 0 1.5px 0 0 #64b5f6';
+  notifContent.style.padding = '18px 34px 16px 20px';
+  notifContent.style.minWidth = '240px';
+  notifContent.style.cursor = 'pointer';
+  notifContent.style.display = 'flex';
+  notifContent.style.alignItems = 'center';
+  notifContent.style.gap = '12px';
+  notifContent.style.transition = 'box-shadow 0.23s, transform 0.2s, opacity 0.5s';
+  notifContent.style.userSelect = 'none';
+  notifContent.title = "Click here to switch to the 3D Room or explore my Portfolio.";
+
+  // Add image and text
+  const img = document.createElement('img');
+  img.src = '/windows.png';
+  img.alt = 'Room';
+  img.style.width = '32px';
+  img.style.height = '32px';
+  img.style.borderRadius = '6px';
+  img.style.boxShadow = '0 1px 4px 0 #0002';
+  img.style.objectFit = 'cover';
+  img.style.background = '#23234a';
+
+  const span = document.createElement('span');
+  span.innerHTML = `<strong>Visit My 3D Portfolio!</strong> <br>
+    <em style="font-size:14px;color:#b8e8fc;">Navigate to computer for My Portfolio.</em>`;
+
+  notifContent.appendChild(img);
+  notifContent.appendChild(span);
+  notif.appendChild(notifContent);
+  document.body.appendChild(notif);
+
+  // Simple parallax effect on mousemove
+  function parallaxHandler(e) {
+    const x = (e.clientX / window.innerWidth - 0.5) * 12;
+    const y = (e.clientY / window.innerHeight - 0.5) * 12;
+    notifContent.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+  }
+  document.addEventListener('mousemove', parallaxHandler);
+
+  // Notification click handler
+  notifContent.addEventListener('click', () => {
+    // If we're in "computer-os" overlay, clicking returns to room
+    if (typeof window.returnToRoom === 'function') {
+      window.returnToRoom();
+    } else {
+      window.location.reload();
+    }
+  });
+
+  // Auto-disappear after 2 seconds
+  setTimeout(() => {
+    notifContent.style.opacity = "0";
+    notifContent.style.pointerEvents = "none";
+    setTimeout(() => {
+      if (notif.parentNode) notif.parentNode.removeChild(notif);
+      document.removeEventListener('mousemove', parallaxHandler);
+    }, 600);
+  }, 2000);
+})();
+
+
+
+
 // Animation loop
 function tick() {
   if (!isZoomedIn) {
