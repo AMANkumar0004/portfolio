@@ -7,6 +7,7 @@ import { gsap } from 'gsap';
 // Get the existing canvas from the DOM
 const canvas = document.querySelector('canvas');
 
+
 // Scene
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x111111);
@@ -87,7 +88,7 @@ loader.load(
     
     roomModel.scale.multiplyScalar(scale);
     roomModel.position.sub(center.multiplyScalar(scale));
-    roomModel.position.y = 0;
+    roomModel.position.y = -1;
     
     scene.add(roomModel);
     
@@ -443,39 +444,32 @@ window.downloadResume = function() {
 };
 
 // Open resume in fullscreen
-window.openResumeFullscreen = function() {
-  const resumeImg = document.getElementById('resume-image');
-  if (resumeImg && resumeImg.src && !resumeImg.src.includes('data:image/png;base64,iVBORw0KGgo')) {
-    const fullscreenDiv = document.createElement('div');
-    fullscreenDiv.style.cssText = `
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.95);
-      z-index: 10000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    `;
-    
-    const img = document.createElement('img');
-    img.src = resumeImg.src;
-    img.style.cssText = `
-      max-width: 90%;
-      max-height: 90%;
-      object-fit: contain;
-      border-radius: 8px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-    `;
-    
-    fullscreenDiv.appendChild(img);
-    fullscreenDiv.onclick = () => fullscreenDiv.remove();
-    document.body.appendChild(fullscreenDiv);
-  }
+window.downloadResume = function() {
+  const link = document.createElement('a');
+  link.href = '/AmanKumarResume.pdf';
+  link.download = 'Aman_Kumar_Resume.pdf';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 };
+
+window.openResumeFullscreen = function() {
+  // Open the resume PDF in a new browser tab
+  window.open('/AmanKumarResume.pdf', '_blank');
+};
+
+// Folder icon mappings matching index.html (for use in desktop, etc.)
+const folderIcons = {
+  about: '📁',
+  resume: '📄',
+  projects: `<img src="/project.png" alt="Projects" style="width:40px; height:40px; display:block; margin:0 auto; margin-top:20px;">`,
+  skills: '⚡',
+  contact: `<img src="/contact.png" alt="Contact" style="width:40px; height:40px; display:block; margin:0 auto; margin-top:20px;">`,
+  spotify: `<img src="/spotify.png" alt="Spotify" style="width:40px; height:40px; display:block; margin:0 auto; margin-top:20px;">`
+};
+
+
+
 
 // Folder content data
 const folderContent = {
@@ -491,7 +485,7 @@ const folderContent = {
         <h3 style="color: #64b5f6; margin-top: 30px;">Relevant Coursework</h3>
         <ul>
           <li>Data Structures</li>
-          <li>Algorithms Analysis</li>
+          <li>MERN DEVELOPMENT</li>
           <li>Database Management</li>
           <li>Object-Oriented Programming (OOPs)</li>
           <li>Computer Networks</li>
@@ -593,7 +587,7 @@ const folderContent = {
         <div class="skill-grid">
           <div class="skill-item">
             <h3>MERN Stack</h3>
-            <p>MongoDB, Express, React, Node.js</p>
+            
           </div>
           <div class="skill-item">
             <h3>Node.js</h3>
